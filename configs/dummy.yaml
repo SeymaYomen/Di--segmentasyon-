@@ -1,0 +1,23 @@
+seed: 42
+data:
+  manifest: data/processed/dummy/manifest.csv
+  split_file: data/splits/dummy.json
+  image_size: [128, 128]
+  num_workers: 0
+model:
+  name: unetplusplus
+  encoder: resnet18
+  encoder_weights: null
+training:
+  epochs: 2
+  batch_size: 4
+  pano_ratio: 0.75
+  learning_rate: 0.001
+  patience: 2
+  threshold: 0.5
+  checkpoint: checkpoints/dummy_best.pth
+results_dir: results/dummy
+conformal:
+  alpha: 0.1
+  max_pixels_per_image: 2000
+

@@ -1,0 +1,10 @@
+segmentation-models-pytorch>=0.5,<0.6
+albumentations>=2.0,<3
+opencv-python-headless>=4.10,<5
+numpy>=1.26,<3
+pandas>=2.2,<3
+matplotlib>=3.9,<4
+PyYAML>=6,<7
+scikit-learn>=1.5,<2
+tqdm>=4.66,<5
+
