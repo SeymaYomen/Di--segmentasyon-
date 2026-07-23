@@ -1,6 +1,6 @@
 # Diş Röntgeni Segmentasyon Projesi
 
-Panoramik ve bitewing diş röntgenlerinde ikili diş segmentasyonu için çalıştırılabilir PyTorch projesi. U-Net++ baseline, hasta-bazlı veri ayrımı, kaynak dengeli batch sampler, Dice+BCE kaybı, değerlendirme ve piksel-bazlı conformal tahmin içerir.
+Panoramik diş röntgenlerinde ikili diş segmentasyonu için çalıştırılabilir PyTorch projesi. U-Net++ baseline, hasta-bazlı veri ayrımı, yinelenen örnek denetimi, CLAHE karşılaştırması, iç/dış test değerlendirmesi, Dice+BCE kaybı ve piksel-bazlı conformal tahmin içerir.
 
 > Bu yazılım araştırma/eğitim amaçlıdır; klinik tanı aracı değildir.
 
@@ -44,31 +44,43 @@ python -m src.conformal --config configs/dummy.yaml --checkpoint checkpoints/dum
 
 Çıktılar `checkpoints/` ve `results/` altında oluşur. Dummy veri yalnızca tesisat testidir; bilimsel sonuç sayılmaz.
 
-## 3. Gerçek veriyi yerleştirme
+## 3. Gerçek veri kaynakları ve yerleşim
 
-Ham verileri aşağıdaki dizinlere koyun:
+Bu çalışmanın güncel deney düzeninde iki panoramik diş röntgeni kaynağı kullanılır:
+
+- **CDPR veri paketi:** Model geliştirme verisidir. Eğitim, kalibrasyon, doğrulama ve iç test kümeleri bu paketten üretilir. İndirilen paketteki yetişkin ve çocuk panoramik alt kümeleri birlikte denetlenir.
+- **External OPG (Mendeley Data):** 329 görüntü-maske çiftinden oluşan bağımsız dış test kümesidir. Model bu veriyle eğitilmez; yalnızca farklı bir kaynaktaki genelleme performansını ölçmek için kullanılır.
+- **OdontoAI:** Erişim platformunun sonlandırılması nedeniyle zorunlu veri kaynağı değildir ve mevcut deneylere dahil edilmemiştir.
+- **ISBI bitewing:** Güncel deney kapsamına dahil değildir.
+
+Kaynaklar:
+
+- [Children's Dental Panoramic Radiographs Dataset makalesi](https://www.nature.com/articles/s41597-023-02237-5)
+- [CDPR veri indirme sayfası (Figshare)](https://springernature.figshare.com/articles/dataset/Children_s_Dental_Panoramic_Radiographs_Dataset/21621705)
+- [External OPG veri seti (Mendeley Data)](https://data.mendeley.com/datasets/jrz4nj82zv/1)
+
+Ham verileri aşağıdaki dizinlerde tutun:
 
 ```text
-data/raw/odontoai/
-data/raw/cdpr/
-data/raw/isbi_bitewing/
+data/raw/cdpr_bundle/
+data/raw/opg_external/
 ```
 
-Her veri setini önce ikili PNG maskelere dönüştürün. Bu proje model girişinde şu manifest şemasını kullanır:
+CDPR verisini denetlemek, kesin yinelenenleri/boş maskeleri çıkarmak ve bölmeleri üretmek için:
+
+```bash
+python -m src.audit_cdpr --raw-root data/raw/cdpr_bundle --output-dir data/processed/cdpr_audit
+python -m src.build_cdpr_splits --audit-manifest data/processed/cdpr_audit/manifest_audited.csv --output-manifest data/processed/cdpr/manifest.csv --output-splits data/splits/cdpr.json --seed 42
+```
+
+Modelin kullandığı asgari manifest şeması şöyledir:
 
 ```csv
 image_path,mask_path,patient_id,source
 C:/data/img001.png,C:/data/mask001.png,P001,panoramic
-C:/data/img002.png,C:/data/mask002.png,P002,bitewing
 ```
 
-`source` yalnızca `panoramic` veya `bitewing` olmalıdır. Aynı hastaya ait bütün görüntüler aynı `patient_id` değerini taşımalıdır. Ardından:
-
-```bash
-python -m src.prepare_data --manifest data/raw/manifest.csv --output data/processed/main --split-output data/splits/main.json
-```
-
-Hazırlama komutu panoramik görüntüleri ve maskeleri aynı orta çizgiden ikiye böler, yeniden boyutlandırır ve hasta bazında `%60/%10/%15/%15` train/calibration/validation/test ayrımı yapar. Bitewing örnekleri bölünmeden yeniden boyutlandırılır.
+Aynı hastaya ait bütün örnekler aynı `patient_id` değerini taşımalı ve tek bir bölmede kalmalıdır. Mevcut iş akışı eğitim/kalibrasyon/doğrulama/test ayrımını hasta bazında üretir ve görüntü karmasıyla veri sızıntısını ayrıca kontrol eder. External OPG kümesi bu bölmelere karıştırılmaz.
 
 ## 4. Eğitim ve değerlendirme
 
@@ -91,11 +103,12 @@ TransUNet seçeneği için bu proje `segmentation-models-pytorch` içindeki tran
 
 ## 6. Veri erişimi ve etik
 
-- OdontoAI için veri sahibinin lisans ve erişim prosedürünü izleyin.
-- “CDPR” kısaltmasının hangi veri setini ifade ettiğini danışmanınızla kesinleştirin.
-- ISBI challenge verisinin resmî lisans/erişim koşullarını doğrulayın.
-- Hasta verilerini repoya commit etmeyin; kimliksizleştirme ve kurum etik kurul kurallarına uyun.
-- Bölmeyi görüntü bazında değil hasta bazında yapın; aksi halde veri sızıntısı olur.
+- CDPR ve External OPG verilerinin kaynak sayfalarındaki lisans, atıf ve kullanım koşullarını izleyin.
+- OdontoAI mevcut deney düzeninde zorunlu değildir ve erişilemeyen veri sonuçlara dahil edilmez.
+- Ham röntgenleri, maskeleri ve model ağırlıklarını repoya commit etmeyin.
+- Hasta verilerini kimliksizleştirin ve kurum/etik kurul kurallarına uyun.
+- Bölmeleri hasta bazında üretin; kesin yinelenen görüntüleri bölme işleminden önce çıkarın.
+- External OPG kümesini yalnızca dış test için kullanın; eğitim veya hiperparametre seçimine dahil etmeyin.
 
 ## Kontrol listesi
 
@@ -109,4 +122,3 @@ TransUNet seçeneği için bu proje `segmentation-models-pytorch` içindeki tran
 - [ ] Genel ve veri-kaynağı bazlı metrikler raporlandı
 - [ ] Conformal kalibrasyon yalnızca calibration setinde yapıldı
 - [ ] Sonuçlar farklı seed'lerle tekrarlandı
-
