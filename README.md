@@ -46,10 +46,11 @@ python -m src.conformal --config configs/dummy.yaml --checkpoint checkpoints/dum
 
 ## 3. Gerçek veri kaynakları ve yerleşim
 
-Bu çalışmanın güncel deney düzeninde iki panoramik diş röntgeni kaynağı kullanılır:
+Bu çalışmanın güncel deney düzeninde bir geliştirme kaynağı ve iki bağımsız dış test kaynağı kullanılır:
 
 - **CDPR veri paketi:** Model geliştirme verisidir. Eğitim, kalibrasyon, doğrulama ve iç test kümeleri bu paketten üretilir. İndirilen paketteki yetişkin ve çocuk panoramik alt kümeleri birlikte denetlenir.
-- **External OPG (Mendeley Data):** 329 görüntü-maske çiftinden oluşan bağımsız dış test kümesidir. Model bu veriyle eğitilmez; yalnızca farklı bir kaynaktaki genelleme performansını ölçmek için kullanılır.
+- **External OPG (Mendeley Data):** 329 görüntü-maske çiftinden oluşan birinci bağımsız dış test kümesidir. Model bu veriyle eğitilmez; yalnızca farklı bir kaynaktaki genelleme performansını ölçmek için kullanılır.
+- **AKUDENTAL v1.0:** Akdeniz Üniversitesi Diş Hastanesinde iki cihazla toplanmış 333 yetişkin panoramik görüntüden oluşan ikinci dış test kaynağıdır. COCO instance poligonları doğal diş sınıfları birleştirilerek ikili maskeye dönüştürülecek; kalite ve sızıntı denetiminden sonra değerlendirmeye alınacaktır. Veri CC BY-NC-SA 4.0 altında yalnızca ticari olmayan akademik kullanıma açıktır.
 - **OdontoAI:** Erişim platformunun sonlandırılması nedeniyle zorunlu veri kaynağı değildir ve mevcut deneylere dahil edilmemiştir.
 - **ISBI bitewing:** Güncel deney kapsamına dahil değildir.
 
@@ -58,12 +59,15 @@ Kaynaklar:
 - [Children's Dental Panoramic Radiographs Dataset makalesi](https://www.nature.com/articles/s41597-023-02237-5)
 - [CDPR veri indirme sayfası (Figshare)](https://springernature.figshare.com/articles/dataset/Children_s_Dental_Panoramic_Radiographs_Dataset/21621705)
 - [External OPG veri seti (Mendeley Data)](https://data.mendeley.com/datasets/jrz4nj82zv/1)
+- [AKUDENTAL veri ve kod deposu](https://github.com/melihoz/AKUDENTAL)
+- [AKUDENTAL makalesi](https://doi.org/10.1186/s12903-025-07645-0)
 
 Ham verileri aşağıdaki dizinlerde tutun:
 
 ```text
 data/raw/cdpr_bundle/
 data/raw/opg_external/
+data/raw/akudental/
 ```
 
 CDPR verisini denetlemek, kesin yinelenenleri/boş maskeleri çıkarmak ve bölmeleri üretmek için:
@@ -108,7 +112,9 @@ TransUNet seçeneği için bu proje `segmentation-models-pytorch` içindeki tran
 - Ham röntgenleri, maskeleri ve model ağırlıklarını repoya commit etmeyin.
 - Hasta verilerini kimliksizleştirin ve kurum/etik kurul kurallarına uyun.
 - Bölmeleri hasta bazında üretin; kesin yinelenen görüntüleri bölme işleminden önce çıkarın.
-- External OPG kümesini yalnızca dış test için kullanın; eğitim veya hiperparametre seçimine dahil etmeyin.
+- External OPG ve AKUDENTAL kümelerini yalnızca dış test için kullanın; eğitim veya hiperparametre seçimine dahil etmeyin.
+- AKUDENTAL için doğal diş poligonlarını birleştirin; restorasyon sınıflarını ana ikili maskeye eklemeyin ve implant kuralını değerlendirmeden önce sabitleyin.
+- AKUDENTAL lisansının ticari olmayan ve aynı lisansla paylaşım koşullarına uyun.
 
 ## Kontrol listesi
 
