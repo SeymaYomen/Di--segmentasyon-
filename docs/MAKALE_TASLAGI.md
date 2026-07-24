@@ -12,7 +12,7 @@ Bu çalışmanın katkısı yalnızca yüksek Dice skoru elde etmek değildir. A
 
 ## Araştırma soruları
 
-1. İç CDPR testinden bağımsız External OPG testine geçildiğinde segmentasyon performansı ne kadar değişmektedir?
+1. İç CDPR testinden bağımsız Mendeley External OPG ve AKUDENTAL testlerine geçildiğinde segmentasyon performansı ne kadar değişmektedir?
 2. CLAHE ön işleme, iç ve dış test arasındaki genelleme farkını azaltmakta mıdır?
 3. Kalibrasyon kümesinde belirlenen conformal eşik, iç ve dış testte hedef kapsama düzeyini ne ölçüde korumaktadır?
 
@@ -20,7 +20,7 @@ Bu çalışmanın katkısı yalnızca yüksek Dice skoru elde etmek değildir. A
 
 **Amaç:** Panoramik diş röntgeni segmentasyonunda merkezler arası genellenebilirliği, CLAHE ön işlemenin etkisini ve conformal belirsizlik davranışını incelemek.
 
-**Yöntem:** U-Net++ modeli, denetlenmiş ve hasta-bazlı ayrılmış Children's Dental Panoramic Radiographs verisi üzerinde eğitildi. Model seçimi doğrulama kümesiyle, conformal eşik ayrı kalibrasyon kümesiyle yapıldı. Bağımsız dış test için eğitim ve hiperparametre seçiminde kullanılmayan 329 görüntülük Mendeley External OPG verisi kullanıldı. Baseline ve CLAHE koşulları aynı bölmeler ve değerlendirme kurallarıyla karşılaştırıldı.
+**Yöntem:** U-Net++ modeli, denetlenmiş ve hasta-bazlı ayrılmış Children's Dental Panoramic Radiographs verisi üzerinde eğitildi. Model seçimi doğrulama kümesiyle, conformal eşik ayrı kalibrasyon kümesiyle yapıldı. Birinci bağımsız dış test için eğitim ve hiperparametre seçiminde kullanılmayan 329 görüntülük Mendeley External OPG verisi kullanıldı. İkinci dış test olarak, dönüşüm ve kalite denetimi tamamlandıktan sonra 333 yetişkin görüntüden oluşan AKUDENTAL v1.0 kullanılacaktır. Baseline ve CLAHE koşulları aynı değerlendirme kurallarıyla karşılaştırılacaktır.
 
 **Bulgular:** Baseline model iç testte Dice 0.94397, IoU 0.89521 ve piksel doğruluğu 0.98044; dış testte sırasıyla 0.89242, 0.80766 ve 0.97300 elde etti. İç testten dış teste Dice 5.16, IoU 8.76 ve piksel doğruluğu 0.74 yüzde puan düştü. CLAHE ve conformal sonuçları: [tamamlanacak].
 
@@ -42,7 +42,7 @@ Bu çalışmanın katkısı yalnızca yüksek Dice skoru elde etmek değildir. A
 
 **Mendeley External OPG:** 329 görüntü-maske çifti yalnızca bağımsız dış test için kullanıldı; eğitim, model seçimi, eşik veya hiperparametre ayarında kullanılmadı.
 
-**InReDD PAN924:** PhysioNet erişim başvurusu incelemededir. Erişim ve format doğrulaması tamamlanırsa önceden tanımlı ikinci dış test olarak değerlendirilecektir; aksi halde makalenin zorunlu bileşeni değildir.
+**AKUDENTAL v1.0:** Akdeniz Üniversitesi Diş Hastanesinde iki cihazla toplanmış 333 yetişkin panoramik görüntüden oluşur. 32 doğal diş ile restorasyon/implant sınıfları COCO poligonlarıyla etiketlenmiştir ve veri CC BY-NC-SA 4.0 altında ticari olmayan akademik kullanıma açıktır. İkinci dış testten önce doğal diş poligonları tek ikili maskede birleştirilecek; restorasyon sınıfları dışlanacak, implant kuralı önceden tanımlanacak, görüntü-maske kalite kontrolü ve CDPR/Mendeley ile hash taraması yapılacaktır.
 
 STS-Tooth, kaynak örtüşmesi ve veri sızıntısı riski nedeniyle çalışmaya dahil edilmedi.
 
@@ -126,11 +126,11 @@ Yetişkin/çocuk sonuçları örneklem büyüklüğü ve bootstrap %95 güven ar
 - Piksel doğruluğunun sınıf dengesizliği nedeniyle tek başına yanıltıcı olabilmesi.
 - CLAHE'nin iç performansı artırıp dış performansı düşürmesi veya tersi olasılığının değerlendirilmesi.
 - Conformal kapsamanın dağılım değişiminde bozulmasının güven katmanı açısından önemi.
-- Tek dış merkezin genellenebilirlik iddiasını sınırlaması; InReDD'nin yalnızca erişim sağlanırsa ek doğrulama olarak kullanılması.
+- İki dış merkezin farklı etiket protokolleri nedeniyle doğrudan karşılaştırmada oluşturabileceği ölçüm yanlılığı.
 
 ## 5. Sınırlılıklar
 
-- Şu aşamada tek bağımsız dış test kaynağı.
+- Şu aşamada yalnızca Mendeley dış testi tamamlanmıştır; AKUDENTAL dönüşüm ve kalite denetimi beklemektedir.
 - Çocuk iç test alt grubunun küçük olması.
 - Mevcut conformal yaklaşımın piksel düzeyinde marjinal kapsama sağlaması.
 - Tek ana seed ile eğitim yapılmış olması.
