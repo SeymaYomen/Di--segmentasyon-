@@ -12,4 +12,20 @@ results/**
 !data/splits/.gitkeep
 !checkpoints/.gitkeep
 !results/.gitkeep
+!results/published/
+!results/published/**
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+data/raw/**
+data/processed/**
+data/splits/*.json
+checkpoints/*.pth
+results/**
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/splits/.gitkeep
+!checkpoints/.gitkeep
+!results/.gitkeep
 
