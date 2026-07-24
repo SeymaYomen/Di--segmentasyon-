@@ -1,0 +1,3 @@
+method,test_set,n_images,dice,iou,pixel_accuracy
+Baseline,Internal CDPR,360,0.9439727089,0.8952139591,0.9804409027
+Baseline,External OPG,329,0.8924176974,0.8076624792,0.9730008134
