@@ -12,8 +12,10 @@ bulunmaz.
 - `model_performance.svg`: iç/dış performans karşılaştırması
 - `conformal_comparison.svg`: kapsama ve belirsizlik oranları
 - `age_subgroup_dice.svg`: alt grup Dice ve %95 güven aralıkları
-- `qualitative_good_hard_panel.png`: dış OPG'den kimliksiz iki iyi ve iki zor
-  örneğin Baseline–CLAHE karşılaştırması
+- `qualitative_good_hard_panel.csv/json`: dış OPG'den kimliksiz iki iyi ve iki
+  zor örneğin seçim kaydı. Tıbbi görüntü içeren 6,2 MB PNG paneli hasta/dosya
+  kimliği içermese de kamu reposuna otomatik eklenmemiş, doğrulanmış Drive
+  sonuç klasöründe tutulmuştur.
 - `PROJECT_HEALTHCHECK.md`: Colab/Drive uçtan uca doğrulama özeti
 - `PROVENANCE.md`: config, checkpoint, ham metrik ve figür üretim zinciri
 
