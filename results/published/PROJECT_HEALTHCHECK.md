@@ -5,16 +5,15 @@
 27 Temmuz 2026 tarihinde Google Colab ve Google Drive üzerindeki asıl deney
 artefaktlarıyla doğrulandı.
 
-- 6/6 deney için görüntü bazlı metrikler ile toplu `metrics.json` ortalamaları
+- 6/6 deney için görüntü-bazlı metrikler ile toplu `metrics.json` ortalamaları
   eşleşti.
-- Baseline ve CLAHE checkpoint dosyaları bulundu ve gerçek çıkarımda
-  kullanılabildi.
+- Baseline ve CLAHE checkpointleri bulundu ve gerçek çıkarımda kullanıldı.
 - 9/9 eşleştirilmiş bootstrap/Holm karşılaştırması doğrulandı.
-- Conformal ve yaş alt grup sonuçları bulundu.
-- Mendeley OPG dış testinden Baseline için 8 ve CLAHE için 8 nitel tahmin
-  görseli üretildi.
+- Conformal ve yaş alt grubu sonuçları bulundu.
+- Dış OPG için iki iyi ve iki zor örnekten oluşan kimliksiz nitel panel
+  üretildi (`qualitative_good_hard_panel.png`, 6.196.892 bayt).
 - Streamlit servisi başlatıldı ve sağlık uç noktası `ok` döndürdü.
-- Artefaktların SHA-256 kimlikleri Drive'daki
+- Artefakt SHA-256 kimlikleri Drive'daki
   `published/project_healthcheck.json` dosyasına kaydedildi.
 
 ## Doğrulanmış deneyler
@@ -26,5 +25,5 @@ artefaktlarıyla doğrulandı.
 - Clean STS exploratory | Baseline: n=52, Dice=0.899960802
 - Clean STS exploratory | CLAHE: n=52, Dice=0.899531486
 
-Ham görüntüler, hasta kimlikleri, görüntü bazlı tablolar ve checkpointler
+Ham görüntüler, hasta kimlikleri, görüntü-bazlı tablolar ve checkpointler
 GitHub'a yüklenmez. Kimliksiz toplu sonuçlar ve doğrulama özeti yayımlanır.

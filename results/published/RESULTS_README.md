@@ -1,27 +1,22 @@
 # Yayımlanabilir Sonuçlar
 
-Bu klasör yalnızca kimliksiz toplu metrikleri içerir. Ham görüntüler, hasta
-kimlikleri, maskeler ve model ağırlıkları burada bulunmaz.
+Bu klasör yalnızca kimliksiz toplu metrikleri ve makale figürlerini içerir. Ham
+görüntüler, hasta/dosya kimlikleri, maskeler ve model ağırlıkları burada
+bulunmaz.
 
 - `final_metrics.csv`: iç ve dış test sonuçları
+- `paired_bootstrap_holm.csv`: eşleştirilmiş farklar, %95 bootstrap güven
+  aralıkları ve Holm-düzeltilmiş p değerleri
 - `conformal_comparison.csv`: piksel düzeyi conformal sonuçları
-- `age_subgroup_metrics.csv`: yaş alt grup Dice ve bootstrap güven aralıkları
-- `model_performance.svg`: iç/dış Dice ve IoU karşılaştırması
+- `age_subgroup_metrics.csv`: yaş alt grup Dice ve güven aralıkları
+- `model_performance.svg`: iç/dış performans karşılaştırması
 - `conformal_comparison.svg`: kapsama ve belirsizlik oranları
 - `age_subgroup_dice.svg`: alt grup Dice ve %95 güven aralıkları
-- `paired_bootstrap_holm.csv`: Baseline–CLAHE eşleştirilmiş farkları,
-  bootstrap güven aralıkları ve Holm düzeltilmiş p-değerleri
+- `qualitative_good_hard_panel.png`: dış OPG'den kimliksiz iki iyi ve iki zor
+  örneğin Baseline–CLAHE karşılaştırması
 - `PROJECT_HEALTHCHECK.md`: Colab/Drive uçtan uca doğrulama özeti
-- `PROVENANCE.md`: sonuçların config, checkpoint ve ham metriklere kadar
-  izlenebilir üretim zinciri
+- `PROVENANCE.md`: config, checkpoint, ham metrik ve figür üretim zinciri
 
-`final_metrics.csv`, 27 Temmuz 2026 tarihinde Drive'daki altı ham
-`metrics.json` dosyasından tam hassasiyetle doğrulanmıştır. Ayrıntılar
-`PROVENANCE.md` ve `PROJECT_HEALTHCHECK.md` içindedir.
-
-Ham sonuçları birleştirip grafikleri yeniden üretmek için:
-
-```bash
-python -m src.collect_published_results
-python -m src.generate_publication_figures
-```
+Altı deneyin görüntü-bazlı ve toplu metrik uyumu
+`PROJECT_HEALTHCHECK.md` ile doğrulanmıştır. Nitel panelin seçimi
+`PROVENANCE.md` içinde açıklanmıştır.

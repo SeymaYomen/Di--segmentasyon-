@@ -1,0 +1,12 @@
+{
+  "selection": "İki yöntemin ortalama Dice değerine göre en yüksek ve en düşük örnekler.",
+  "patient_identifiers_published": false,
+  "drive_artifact": "dis_segmentasyon_sonuclar/published/qualitative_good_hard_panel.png",
+  "png_size_bytes": 6196892,
+  "rows": [
+    {"example": "İyi 1", "difficulty": "İyi", "baseline_dice": 0.9478340744972228, "clahe_dice": 0.941841185092926},
+    {"example": "İyi 2", "difficulty": "İyi", "baseline_dice": 0.9410573840141296, "clahe_dice": 0.9346467852592468},
+    {"example": "Zor 3", "difficulty": "Zor", "baseline_dice": 0.6548761129379272, "clahe_dice": 0.8491827845573425},
+    {"example": "Zor 4", "difficulty": "Zor", "baseline_dice": 0.7690311670303345, "clahe_dice": 0.7658646106719971}
+  ]
+}
