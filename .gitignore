@@ -12,4 +12,5 @@ results/**
 !data/splits/.gitkeep
 !checkpoints/.gitkeep
 !results/.gitkeep
-
+!results/published/
+!results/published/**

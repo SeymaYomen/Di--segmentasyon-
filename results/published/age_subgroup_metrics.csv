@@ -1,0 +1,5 @@
+method,age_group,n,dice,ci95_low,ci95_high
+Baseline,adult,330,0.946603,0.943480,0.949505
+Baseline,pediatric,30,0.915044,0.910074,0.920198
+CLAHE,adult,330,0.941237,0.938120,0.944383
+CLAHE,pediatric,30,0.916303,0.912364,0.920389

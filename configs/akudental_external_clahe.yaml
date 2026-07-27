@@ -1,0 +1,17 @@
+seed: 42
+data:
+  manifest: data/processed/akudental/manifest.csv
+  split_file: data/splits/akudental.json
+  image_size: [512, 512]
+  num_workers: 0
+  preprocessing:
+    mode: clahe
+    gamma: 1.0
+model:
+  name: unetplusplus
+  encoder: resnet34
+  encoder_weights: null
+training:
+  batch_size: 4
+  threshold: 0.5
+results_dir: results/akudental_external_clahe

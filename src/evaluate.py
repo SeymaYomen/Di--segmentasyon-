@@ -4,6 +4,7 @@ import argparse
 import json
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 import torch
 
@@ -11,6 +12,23 @@ from .common import device_from_system, load_config, read_splits
 from .metrics import binary_metrics
 from .models import build_model
 from .pipeline import make_dataset, make_eval_loader
+
+
+METRIC_COLUMNS = ["dice", "iou", "pixel_accuracy"]
+
+
+def bootstrap_summary(frame: pd.DataFrame, seed: int, n_bootstrap: int = 2000) -> dict:
+    rng = np.random.default_rng(seed)
+    result = {}
+    for metric in METRIC_COLUMNS:
+        values = frame[metric].to_numpy(dtype=float)
+        means = rng.choice(values, size=(n_bootstrap, len(values)), replace=True).mean(axis=1)
+        result[metric] = {
+            "mean": float(values.mean()),
+            "ci95_low": float(np.quantile(means, 0.025)),
+            "ci95_high": float(np.quantile(means, 0.975)),
+        }
+    return result
 
 
 def main() -> None:
@@ -35,8 +53,9 @@ def main() -> None:
     frame = pd.DataFrame(rows)
     results = Path(config["results_dir"]); results.mkdir(parents=True, exist_ok=True)
     frame.to_csv(results / "per_image_metrics.csv", index=False)
-    report = {"overall": frame[["dice", "iou", "pixel_accuracy"]].mean().to_dict(),
-              "by_source": frame.groupby("source")[["dice", "iou", "pixel_accuracy"]].mean().to_dict("index"),
+    report = {"overall": frame[METRIC_COLUMNS].mean().to_dict(),
+              "overall_with_95ci": bootstrap_summary(frame, config.get("seed", 42)),
+              "by_source": frame.groupby("source")[METRIC_COLUMNS].mean().to_dict("index"),
               "n_images": len(frame)}
     (results / "metrics.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
     print(json.dumps(report, indent=2))
@@ -44,4 +63,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
