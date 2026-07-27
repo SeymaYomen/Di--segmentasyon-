@@ -1,0 +1,29 @@
+{
+  "generated_on": "2026-07-24",
+  "model": "U-Net++",
+  "preprocessing": "baseline_without_clahe",
+  "internal_test": {
+    "dataset": "CDPR",
+    "n_images": 360,
+    "dice": 0.9439727089471287,
+    "iou": 0.8952139591177305,
+    "pixel_accuracy": 0.980440902709961
+  },
+  "external_test": {
+    "dataset": "Mendeley External OPG",
+    "n_images": 329,
+    "dice": 0.8924176974,
+    "iou": 0.8076624792,
+    "pixel_accuracy": 0.9730008134
+  },
+  "internal_minus_external_percentage_points": {
+    "dice": 5.1555011547,
+    "iou": 8.7551479918,
+    "pixel_accuracy": 0.744008931
+  },
+  "notes": [
+    "Only aggregate, non-patient-level results are published.",
+    "External OPG was not used for training or hyperparameter selection.",
+    "CLAHE results are intentionally absent until training and evaluation are completed."
+  ]
+}
