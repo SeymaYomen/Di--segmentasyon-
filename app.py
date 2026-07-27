@@ -97,11 +97,13 @@ st.caption("Araştırma demosu — klinik tanı amacıyla kullanılamaz.")
 
 with st.sidebar:
     method = st.radio(
-        "Deney yöntemi",
+        "Model seçimi",
         options=list(METHODS),
+        index=list(METHODS).index("CLAHE"),
         help=(
-            "İç testte Baseline; bağımsız OPG dış testinde CLAHE daha yüksek "
-            "Dice üretmiştir. Evrensel bir final model seçilmemiştir."
+            "CLAHE, bağımsız Mendeley OPG dış testindeki daha yüksek genelleme "
+            "performansı nedeniyle varsayılandır. Baseline iç CDPR testinde daha "
+            "yüksek sonuç vermiştir; iki model de karşılaştırma için seçilebilir."
         ),
     )
     checkpoint = st.file_uploader(
@@ -110,8 +112,20 @@ with st.sidebar:
     )
     threshold = st.slider("Maske eşiği", 0.05, 0.95, 0.50, 0.05)
     st.info(
-        f"Seçili yöntem: {method}. Ön işleme otomatik olarak "
+        f"Seçili model: {method}. Ön işleme otomatik olarak "
         f"`{METHODS[method]['preprocessing']}` uygulanır."
+    )
+
+st.subheader(f"AKTİF MODEL: {method.upper()}")
+if method == "CLAHE":
+    st.info(
+        "CLAHE varsayılan modeldir: bağımsız Mendeley OPG dış testinde "
+        "Baseline'dan daha yüksek performans göstermiştir."
+    )
+else:
+    st.warning(
+        "Baseline karşılaştırma amacıyla seçildi. İç CDPR testinde daha yüksek "
+        "performans göstermiştir."
     )
 
 image_file = st.file_uploader(
@@ -131,17 +145,18 @@ if image_file and checkpoint:
         st.error(f"Checkpoint yüklenemedi: {exc}")
         st.stop()
 
+    st.success(f"SONUÇLAR — MODEL: {method.upper()}")
     col1, col2, col3 = st.columns(3)
     col1.image(processed, caption="Model girdisi", use_container_width=True)
     col2.image(
         mask * 255,
-        caption="İkili diş maskesi",
+        caption=f"İkili diş maskesi — {method}",
         clamp=True,
         use_container_width=True,
     )
     col3.image(
         overlay(processed, mask),
-        caption="Bindirme",
+        caption=f"Bindirme — Model: {method}",
         use_container_width=True,
     )
     st.metric(
@@ -150,7 +165,7 @@ if image_file and checkpoint:
     )
     st.image(
         probability,
-        caption="Diş olasılık haritası",
+        caption=f"Diş olasılık haritası — Model: {method}",
         clamp=True,
         use_container_width=True,
     )
@@ -158,6 +173,6 @@ elif image_file or checkpoint:
     st.warning("Tahmin için hem röntgeni hem checkpoint dosyasını seçin.")
 else:
     st.write(
-        "Başlamak için deney yöntemini seçin, ona ait model ağırlığını ve bir "
+        "Başlamak için modeli seçin, ona ait model ağırlığını ve bir panoramik "
         "röntgen görüntüsünü yükleyin."
     )
