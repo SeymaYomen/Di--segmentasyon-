@@ -125,6 +125,12 @@ ikili maske ve bindirme görüntüsü üretir. Klinik kullanım için doğrulanm
 - `PROJE_DURUMU.md`: tamamlanan ve kalan işler
 - `docs/MAKALE_TASLAGI.md`: makale iskeleti
 
+Yayımlanabilir sonuç grafiklerini yeniden üretmek için:
+
+```bash
+python -m src.generate_publication_figures
+```
+
 ## Etik ve yeniden üretilebilirlik
 
 - Lisans ve atıf koşulları her veri kaynağı için ayrıca izlenmelidir.
@@ -132,4 +138,3 @@ ikili maske ve bindirme görüntüsü üretir. Klinik kullanım için doğrulanm
 - Dış test kümeleri eğitim, hiperparametre seçimi veya eşik ayarında kullanılmaz.
 - Çocuk alt grubu n=30 olduğu için sonuçlar keşifsel ve bootstrap güven aralığıyla raporlanır.
 - Cinsiyet bilgisi bulunmadığından cinsiyet alt grup analizi yapılmaz.
-

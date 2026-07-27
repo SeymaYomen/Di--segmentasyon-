@@ -1,6 +1,6 @@
 # Proje Durumu
 
-Son güncelleme: 24 Temmuz 2026
+Son güncelleme: 27 Temmuz 2026
 
 ## Tamamlanan işler
 
@@ -15,6 +15,9 @@ Son güncelleme: 24 Temmuz 2026
 - Baseline ve CLAHE conformal kalibrasyonu
 - Yaş alt grup analizi
 - Sonuç tablolarının kimliksiz biçimde hazırlanması
+- Sonuç grafiklerinin yeniden üretilebilir SVG biçiminde hazırlanması
+- Streamlit araştırma demosunun hazırlanması
+- Kod, yapılandırma, makale taslağı ve kimliksiz sonuçların GitHub `main` dalına birleştirilmesi
 
 ## Bilimsel sonuç
 
@@ -31,7 +34,7 @@ arasında anlamlı fark gözlenmedi.
 - [x] Makale taslağı iskeletini oluşturmak
 - [ ] Danışmanla başlık, yazar sırası ve hedef dergiyi kesinleştirmek
 - [ ] Makale metnini kaynaklarla genişletmek
-- [ ] Son repo değişikliklerini GitHub'a push etmek
+- [x] Son repo değişikliklerini GitHub'a push etmek
 
 ## Güvenli saklama
 
@@ -39,4 +42,3 @@ Checkpoint'ler ve ayrıntılı sonuçlar Google Drive'daki
 `dis_segmentasyon_sonuclar/` klasöründedir. Repo yalnızca kodu, yapılandırmaları
 ve kimliksiz toplu sonuçları içerir. Ham röntgenler, maskeler ve `.pth` dosyaları
 GitHub'a eklenmez.
-
