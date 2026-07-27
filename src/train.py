@@ -36,6 +36,9 @@ def epoch_pass(model, loader, criterion, device, optimizer=None) -> float:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", required=True)
+    parser.add_argument("--resume", default=None)
+    parser.add_argument("--start-epoch", type=int, default=None)
+    parser.add_argument("--additional-epochs", type=int, default=None)
     args = parser.parse_args()
     config = load_config(args.config)
     seed_everything(config["seed"])
@@ -52,8 +55,33 @@ def main() -> None:
     results = Path(config["results_dir"])
     results.mkdir(parents=True, exist_ok=True)
     best, stale, history = float("inf"), 0, []
+    start_epoch = 1
 
-    for epoch in range(1, config["training"]["epochs"] + 1):
+    if args.resume:
+        resume_path = Path(args.resume)
+        payload = torch.load(resume_path, map_location=device, weights_only=False)
+        model.load_state_dict(payload["model"] if "model" in payload else payload)
+        if "optimizer" in payload:
+            optimizer.load_state_dict(payload["optimizer"])
+        if "scheduler" in payload:
+            scheduler.load_state_dict(payload["scheduler"])
+        start_epoch = int(payload.get("epoch", 0)) + 1
+        stale = int(payload.get("stale", 0))
+        if "best_val_loss" in payload:
+            best = float(payload["best_val_loss"])
+        else:
+            best = epoch_pass(model, val_loader, criterion, device)
+            stale = 0
+            print(f"Devam checkpoint doğrulama kaybı: {best:.4f}")
+        print(f"Checkpoint yüklendi: {resume_path}")
+
+    if args.start_epoch is not None:
+        start_epoch = args.start_epoch
+    end_epoch = config["training"]["epochs"]
+    if args.additional_epochs is not None:
+        end_epoch = min(end_epoch, start_epoch + args.additional_epochs - 1)
+
+    for epoch in range(start_epoch, end_epoch + 1):
         train_loss = epoch_pass(model, train_loader, criterion, device, optimizer)
         val_loss = epoch_pass(model, val_loader, criterion, device)
         scheduler.step(val_loss)
@@ -61,7 +89,18 @@ def main() -> None:
         print(f"Epoch {epoch}: train={train_loss:.4f}, val={val_loss:.4f}")
         if val_loss < best:
             best, stale = val_loss, 0
-            torch.save({"model": model.state_dict(), "config": config}, checkpoint)
+            torch.save(
+                {
+                    "model": model.state_dict(),
+                    "optimizer": optimizer.state_dict(),
+                    "scheduler": scheduler.state_dict(),
+                    "config": config,
+                    "epoch": epoch,
+                    "best_val_loss": best,
+                    "stale": stale,
+                },
+                checkpoint,
+            )
         else:
             stale += 1
             if stale >= config["training"]["patience"]:
@@ -79,4 +118,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

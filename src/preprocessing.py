@@ -6,6 +6,30 @@ import cv2
 import numpy as np
 
 
+FILTER_MODES = {"baseline", "clahe", "gamma", "clahe_bilateral"}
+
+
+def enhance_image(image: np.ndarray, mode: str = "baseline", gamma: float = 1.0) -> np.ndarray:
+    """Apply deterministic radiograph enhancement without changing geometry."""
+    if mode not in FILTER_MODES:
+        raise ValueError(f"Bilinmeyen filtre modu: {mode}; seçenekler: {sorted(FILTER_MODES)}")
+    if gamma <= 0:
+        raise ValueError("gamma sıfırdan büyük olmalıdır.")
+    if mode == "baseline":
+        return image.copy()
+
+    gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY) if image.ndim == 3 else image.copy()
+    if mode in {"clahe", "clahe_bilateral"}:
+        clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+        gray = clahe.apply(gray)
+    if mode == "gamma":
+        table = np.array([((value / 255.0) ** gamma) * 255 for value in range(256)], dtype=np.uint8)
+        gray = cv2.LUT(gray, table)
+    if mode == "clahe_bilateral":
+        gray = cv2.bilateralFilter(gray, d=5, sigmaColor=35, sigmaSpace=35)
+    return cv2.cvtColor(gray, cv2.COLOR_GRAY2RGB)
+
+
 def read_pair(image_path: str | Path, mask_path: str | Path) -> tuple[np.ndarray, np.ndarray]:
     image = cv2.imread(str(image_path), cv2.IMREAD_COLOR)
     mask = cv2.imread(str(mask_path), cv2.IMREAD_GRAYSCALE)
@@ -39,4 +63,3 @@ def save_pair(image: np.ndarray, mask: np.ndarray, image_path: Path, mask_path: 
         raise OSError(f"Yazılamadı: {image_path}")
     if not cv2.imwrite(str(mask_path), mask):
         raise OSError(f"Yazılamadı: {mask_path}")
-

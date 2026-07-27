@@ -1,152 +1,108 @@
 # Makale Taslağı
 
-> Çalışma başlığı ve metin danışman görüşüyle sonlandırılacaktır. Köşeli parantezli alanlar deneyler tamamlanınca doldurulacaktır.
+## Geçici başlık
 
-## Önerilen başlık
+**Panoramik Diş Röntgeni Segmentasyonunda Dış-Merkez Genellenebilirlik,
+CLAHE Ön İşleme ve Conformal Belirsizlik Analizi**
 
-**Panoramik Diş Röntgeni Segmentasyonunda Dış-Merkez Genellenebilirlik ve Conformal Belirsizlik: CLAHE Ön İşlemenin Etkisi**
+## Özet
 
-## Özgün katkı
-
-Bu çalışmanın katkısı yalnızca yüksek Dice skoru elde etmek değildir. Ana katkı; aynı segmentasyon modelinin iç test ve bağımsız dış test davranışını birlikte incelemek, CLAHE ön işlemenin genelleme farkına etkisini ölçmek ve conformal prediction kapsamasının dağılım değişiminde nasıl davrandığını raporlamaktır.
-
-## Araştırma soruları
-
-1. İç CDPR testinden bağımsız Mendeley External OPG ve AKUDENTAL testlerine geçildiğinde segmentasyon performansı ne kadar değişmektedir?
-2. CLAHE ön işleme, iç ve dış test arasındaki genelleme farkını azaltmakta mıdır?
-3. Kalibrasyon kümesinde belirlenen conformal eşik, iç ve dış testte hedef kapsama düzeyini ne ölçüde korumaktadır?
-
-## Özet taslağı
-
-**Amaç:** Panoramik diş röntgeni segmentasyonunda merkezler arası genellenebilirliği, CLAHE ön işlemenin etkisini ve conformal belirsizlik davranışını incelemek.
-
-**Yöntem:** U-Net++ modeli, denetlenmiş ve hasta-bazlı ayrılmış Children's Dental Panoramic Radiographs verisi üzerinde eğitildi. Model seçimi doğrulama kümesiyle, conformal eşik ayrı kalibrasyon kümesiyle yapıldı. Birinci bağımsız dış test için eğitim ve hiperparametre seçiminde kullanılmayan 329 görüntülük Mendeley External OPG verisi kullanıldı. İkinci dış test olarak, dönüşüm ve kalite denetimi tamamlandıktan sonra 333 yetişkin görüntüden oluşan AKUDENTAL v1.0 kullanılacaktır. Baseline ve CLAHE koşulları aynı değerlendirme kurallarıyla karşılaştırılacaktır.
-
-**Bulgular:** Baseline model iç testte Dice 0.94397, IoU 0.89521 ve piksel doğruluğu 0.98044; dış testte sırasıyla 0.89242, 0.80766 ve 0.97300 elde etti. İç testten dış teste Dice 5.16, IoU 8.76 ve piksel doğruluğu 0.74 yüzde puan düştü. CLAHE ve conformal sonuçları: [tamamlanacak].
-
-**Sonuç:** İlk bulgular yüksek iç test başarımının dış merkezde aynı ölçüde korunmadığını göstermektedir. CLAHE ve conformal analizler tamamlandığında, ön işlemenin genellenebilirliğe ve belirsizlik kapsamasına etkisi birlikte değerlendirilecektir.
+Amaç, panoramik diş röntgenlerinde U-Net++ tabanlı ikili diş
+segmentasyonunun iç ve bağımsız dış veri dağılımlarındaki performansını
+incelemek; CLAHE ön işlemesinin genellenebilirliğe etkisini ve piksel düzeyi
+conformal belirsizlik davranışını değerlendirmektir. Model, hasta bazında
+ayrılmış CDPR verisi üzerinde eğitilmiş ve iki bağımsız kaynakta test
+edilmiştir. Ana sonuç, CLAHE'nin iç testte küçük bir performans düşüşüne rağmen
+Mendeley dış testinde Dice ve IoU'yu artırmasıdır. İkinci dış test küçük ve
+yoğun sızıntı temizliği sonrası kaldığı için keşifsel olarak raporlanmıştır.
 
 ## 1. Giriş
 
-- Panoramik radyografilerde otomatik diş segmentasyonunun kullanım alanı ve önemi.
-- Derin öğrenme modellerinin kurum/cihaz/protokol değişimlerinde performans kaybı sorunu.
-- Kontrast farklılıklarına karşı CLAHE kullanımının olası yararı ve aşırı iyileştirme riski.
-- Yüksek ortalama performansın tek başına klinik güveni göstermemesi; belirsizlik ve kapsama ihtiyacı.
-- Literatür boşluğu: iç/dış test, ön işleme ve conformal kapsamanın tek deney düzeninde birlikte incelenmesi.
+- Panoramik röntgen segmentasyonunun klinik iş akışlarındaki yeri
+- Tek-merkez performansının dış-merkez genellenebilirliği garanti etmemesi
+- Görüntü kontrast farklılıkları ve CLAHE gerekçesi
+- Tıbbi yapay zekâda hata kadar belirsizliğin de raporlanması gereği
+- Çalışmanın üç araştırma sorusu ve katkıları
 
-## 2. Materyal ve yöntem
+## 2. Materyal ve Yöntem
 
-### 2.1 Veri kaynakları
+### 2.1 Veri kümeleri
 
-**CDPR/Figshare geliştirme verisi:** Denetim sonrası 2.398 temiz örnek. 485 kesin kopya ve 2 boş maske analizden çıkarıldı. Bölmeler: eğitim 1.451, kalibrasyon 242, doğrulama 345 ve iç test 360. İç test 330 yetişkin ve 30 çocuk görüntüsünden oluştu.
+- CDPR: kaynak, lisans, temizleme, 2.398 çift ve hasta bazlı bölme
+- Mendeley OPG: 329 bağımsız dış test örneği
+- STS-2D-Tooth: 900 etiketli örnekte sızıntı taraması, 848 dışlama, 52 temiz örnek
+- Dış testlerin eğitim ve model seçimine dahil edilmediğinin açık beyanı
 
-**Mendeley External OPG:** 329 görüntü-maske çifti yalnızca bağımsız dış test için kullanıldı; eğitim, model seçimi, eşik veya hiperparametre ayarında kullanılmadı.
+### 2.2 Ön işleme
 
-**AKUDENTAL v1.0:** Akdeniz Üniversitesi Diş Hastanesinde iki cihazla toplanmış 333 yetişkin panoramik görüntüden oluşur. 32 doğal diş ile restorasyon/implant sınıfları COCO poligonlarıyla etiketlenmiştir ve veri CC BY-NC-SA 4.0 altında ticari olmayan akademik kullanıma açıktır. İkinci dış testten önce doğal diş poligonları tek ikili maskede birleştirilecek; restorasyon sınıfları dışlanacak, implant kuralı önceden tanımlanacak, görüntü-maske kalite kontrolü ve CDPR/Mendeley ile hash taraması yapılacaktır.
+- RGB dönüşümü ve 512×512 yeniden boyutlandırma
+- Baseline ile CLAHE kollarının tek farkı
+- Maske değerlerinin ikili hale getirilmesi
 
-STS-Tooth, kaynak örtüşmesi ve veri sızıntısı riski nedeniyle çalışmaya dahil edilmedi.
+### 2.3 Model ve eğitim
 
-### 2.2 Veri kalitesi ve sızıntı önleme
+- U-Net++ ve ResNet34 encoder
+- Dice + BCE kaybı
+- Doğrulama kaybına göre checkpoint
+- Erken durdurma ve yeniden üretilebilir seed
 
-- Kesin kopyalar, bölme işleminden önce görüntü hash'iyle çıkarıldı.
-- Bölmeler hasta bazında oluşturuldu.
-- Dış test kaynakları eğitim ve model seçimi dışında tutuldu.
-- Ham görüntüler, maskeler ve hasta bilgileri açık kod deposunda yayımlanmadı.
+### 2.4 Değerlendirme
 
-### 2.3 Ön işleme
+- Dice, IoU ve piksel doğruluğu
+- Görüntü başına metrikler
+- Eşleştirilmiş bootstrap %95 güven aralıkları
+- Sınırlı sayıdaki karşılaştırmalar için Holm düzeltmesi
 
-İki karşılaştırılabilir deney koşulu tanımlandı:
+### 2.5 Conformal analiz
 
-- Baseline: standart yeniden boyutlandırma/normalizasyon, CLAHE yok.
-- CLAHE: aynı işlem hattı ve veri bölmeleri, yalnızca ön işleme modu CLAHE.
-
-CLAHE parametreleri ve uygulama sırası final kod/config dosyasından aynen raporlanacaktır.
-
-### 2.4 Model ve eğitim
-
-- Mimari: U-Net++.
-- Encoder: ResNet-34.
-- Kayıp: Dice + BCE.
-- Optimizasyon: Adam, başlangıç öğrenme oranı 1e-4.
-- Maksimum epoch: 100; erken durdurma sabrı: 10.
-- Ana deney tohumu: 42.
-
-Tek seed sonucu nihai sağlamlık iddiası için yeterli değildir. Kaynak izin verirse seçili deneyler ek seed'lerle tekrarlanacak veya bootstrap güven aralıklarıyla belirsizlik raporlanacaktır.
-
-### 2.5 Değerlendirme
-
-Birincil metrik Dice; ikincil metrikler IoU ve piksel doğruluğudur. Sonuçlar görüntü düzeyindeki metriklerden özetlenecek ve bootstrap %95 güven aralıkları raporlanacaktır. İç-dış fark mutlak yüzde puan olarak verilecektir.
-
-### 2.6 Conformal prediction
-
-Kalibrasyon yalnızca ayrılmış kalibrasyon kümesinde yapılacaktır. Hedef hata düzeyi alpha=0.10'dur. Mevcut uygulama piksel örneklemeli marjinal kapsama verir; piksellerin uzamsal bağımlılığı nedeniyle garanti görüntü veya bölge düzeyinde yorumlanmayacaktır. İç ve dış test kapsaması ayrı raporlanacaktır.
-
-### 2.7 Alt grup ve istatistik planı
-
-- Yetişkin/çocuk iç test karşılaştırması keşifsel olacaktır; çocuk grubu n=30'dur.
-- Küçük alt gruplarda bootstrap güven aralığı ve etki büyüklüğü önceliklidir.
-- Cinsiyet bilgisi yoksa cinsiyet analizi yapılmayacaktır.
-- Birden çok önceden tanımlı hipotez testi uygulanırsa Holm düzeltmesi kullanılacaktır.
-- Dış test verisi model veya eşik seçmek için kullanılmayacaktır.
+- Ayrı calibration bölümü
+- Nonconformity skoru ve alpha=0.10
+- Marjinal piksel kapsamasının kapsamı ve uzamsal bağımlılık sınırlaması
 
 ## 3. Bulgular
 
-### 3.1 Baseline sonuçları
+### 3.1 Ana performans
 
-| Koşul | Test kümesi | n | Dice | IoU | Piksel doğruluğu |
-|---|---|---:|---:|---:|---:|
-| Baseline | İç CDPR | 360 | 0.94397 | 0.89521 | 0.98044 |
-| Baseline | Dış OPG | 329 | 0.89242 | 0.80766 | 0.97300 |
+`results/published/final_metrics.csv` tablosu kullanılacak.
 
-İç testten dış teste düşüş Dice için 5.16, IoU için 8.76 ve piksel doğruluğu için 0.74 yüzde puandır.
+### 3.2 CLAHE etkisi
 
-### 3.2 CLAHE karşılaştırması
+- İç CDPR'da Dice: 0.9440 → 0.9392
+- Dış OPG'de Dice: 0.8924 → 0.8993
+- Temiz STS'de Dice: 0.9000 → 0.8995
 
-| Koşul | İç Dice | Dış Dice | Dice genelleme farkı | İç IoU | Dış IoU |
-|---|---:|---:|---:|---:|---:|
-| Baseline | 0.94397 | 0.89242 | 5.16 yp | 0.89521 | 0.80766 |
-| CLAHE | [bekleniyor] | [bekleniyor] | [bekleniyor] | [bekleniyor] | [bekleniyor] |
+### 3.3 Conformal sonuçlar
 
-### 3.3 Conformal sonuçları
+- Baseline kapsama: 0.9008
+- CLAHE kapsama: 0.9012
+- Belirsiz/boş oranları yaklaşık %9.8
 
-| Model | Test kümesi | Hedef kapsama | Ampirik kapsama | Belirsiz/boş küme oranı |
-|---|---|---:|---:|---:|
-| Baseline | İç CDPR | 0.90 | [bekleniyor] | [bekleniyor] |
-| Baseline | Dış OPG | 0.90 | [bekleniyor] | [bekleniyor] |
-| CLAHE | İç CDPR | 0.90 | [bekleniyor] | [bekleniyor] |
-| CLAHE | Dış OPG | 0.90 | [bekleniyor] | [bekleniyor] |
+### 3.4 Alt grup sonucu
 
-### 3.4 Alt grup sonuçları
-
-Yetişkin/çocuk sonuçları örneklem büyüklüğü ve bootstrap %95 güven aralıklarıyla sunulacaktır. Çocuk sonuçları doğrulayıcı değil keşifsel olarak yorumlanacaktır.
+Çocuk alt grubu n=30 olduğu için yalnızca keşifsel olarak ve bootstrap güven
+aralığıyla sunulacak. Cinsiyet verisi olmadığından cinsiyet analizi yapılmayacak.
 
 ## 4. Tartışma
 
-- Baseline modelin dış testteki Dice ve özellikle IoU düşüşünün anlamı.
-- Piksel doğruluğunun sınıf dengesizliği nedeniyle tek başına yanıltıcı olabilmesi.
-- CLAHE'nin iç performansı artırıp dış performansı düşürmesi veya tersi olasılığının değerlendirilmesi.
-- Conformal kapsamanın dağılım değişiminde bozulmasının güven katmanı açısından önemi.
-- İki dış merkezin farklı etiket protokolleri nedeniyle doğrudan karşılaştırmada oluşturabileceği ölçüm yanlılığı.
+- CLAHE'nin veri dağılımına bağlı etkisi
+- Yüksek iç test skorunun dış test performansını tek başına garanti etmemesi
+- Conformal katmanın “inceleme gerekli” işaretine olası katkısı
+- STS temiz alt kümesinin küçük olması
+- Tek mimari, tek ana eğitim kaynağı ve piksel düzeyi conformal garanti sınırlamaları
 
-## 5. Sınırlılıklar
+## 5. Sonuç
 
-- Şu aşamada yalnızca Mendeley dış testi tamamlanmıştır; AKUDENTAL dönüşüm ve kalite denetimi beklemektedir.
-- Çocuk iç test alt grubunun küçük olması.
-- Mevcut conformal yaklaşımın piksel düzeyinde marjinal kapsama sağlaması.
-- Tek ana seed ile eğitim yapılmış olması.
-- Panoramik görüntüler ve ikili diş/arka plan göreviyle sınırlı kapsam.
+Çalışma, yalnızca en yüksek iç test skorunu seçmek yerine dış-merkez
+genellenebilirlik ve belirsizliğin birlikte raporlanmasının önemini
+göstermektedir. CLAHE evrensel bir iyileştirme değildir; dış veri dağılımına
+bağlı olarak yarar sağlayabilir.
 
-## 6. Sonuç
+## Yazım tamamlanmadan önce
 
-Çalışma, iç testte yüksek segmentasyon başarımının dış merkez genellenebilirliğini garanti etmediğini nicel olarak göstermektedir. Nihai sonuç, CLAHE'nin bu farkı azaltıp azaltmadığı ve conformal kapsamanın dış dağılımda ne ölçüde korunduğu birlikte değerlendirildikten sonra yazılacaktır.
+- [ ] Danışmanın onayladığı kesin başlık
+- [ ] Yazar sırası ve kurum bilgileri
+- [ ] Hedef dergi formatı
+- [ ] Kaynakça yönetimi ve DOI kontrolü
+- [ ] Etik/lisans beyanının son kontrolü
+- [ ] Nitel tahmin görsellerinin seçimi
 
-## Raporlama kontrolü
-
-- [ ] Veri setlerinin tam atıfları ve lisansları kaynakçada doğrulandı.
-- [ ] CLAHE parametreleri config ile birebir raporlandı.
-- [ ] Checkpoint/resume yöntemi açıklandı.
-- [ ] Görüntü düzeyi bootstrap %95 güven aralıkları eklendi.
-- [ ] İç/dış conformal kapsama ayrı verildi.
-- [ ] Alt grup örneklem sayıları tabloya eklendi.
-- [ ] Ham/hasta düzeyi veriler yayımlanmadı.
-- [ ] Kod ve anonim toplu sonuçların commit kimlikleri arşivlendi.

@@ -6,11 +6,17 @@ import pandas as pd
 import torch
 from torch.utils.data import Dataset
 
+from .preprocessing import enhance_image
+
 
 class DentalSegDataset(Dataset):
-    def __init__(self, frame: pd.DataFrame, transform=None):
+    def __init__(self, frame: pd.DataFrame, transform=None, image_size: tuple[int, int] | None = None,
+                 preprocessing_mode: str = "baseline", gamma: float = 1.0):
         self.frame = frame.reset_index(drop=True).copy()
         self.transform = transform
+        self.image_size = image_size
+        self.preprocessing_mode = preprocessing_mode
+        self.gamma = gamma
 
     def __len__(self) -> int:
         return len(self.frame)
@@ -27,6 +33,11 @@ class DentalSegDataset(Dataset):
             raise FileNotFoundError(f"Örnek okunamadı: {row.image_path}, {row.mask_path}")
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         mask = (mask > 0).astype(np.float32)
+        image = enhance_image(image, self.preprocessing_mode, self.gamma)
+        if self.image_size:
+            height, width = self.image_size
+            image = cv2.resize(image, (width, height), interpolation=cv2.INTER_AREA)
+            mask = cv2.resize(mask, (width, height), interpolation=cv2.INTER_NEAREST)
         if self.transform:
             transformed = self.transform(image=image, mask=mask)
             image, mask = transformed["image"], transformed["mask"]
@@ -39,4 +50,3 @@ def subset_from_split(manifest_path: str, split: dict, split_name: str) -> pd.Da
     frame = pd.read_csv(manifest_path, dtype={"patient_id": str})
     allowed = set(map(str, split[split_name]))
     return frame[frame.patient_id.astype(str).isin(allowed)].reset_index(drop=True)
-

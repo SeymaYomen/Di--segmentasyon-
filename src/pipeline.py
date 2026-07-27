@@ -15,9 +15,19 @@ def train_transform():
 
 def make_dataset(config: dict, splits: dict, name: str, augment: bool = False) -> DentalSegDataset:
     frame = subset_from_split(config["data"]["manifest"], splits, name)
+    max_samples = config["data"].get("max_samples", {}).get(name)
+    if max_samples is not None:
+        frame = frame.head(int(max_samples)).copy()
     if frame.empty:
         raise ValueError(f"'{name}' bölümü boş.")
-    return DentalSegDataset(frame, train_transform() if augment else None)
+    preprocessing = config["data"].get("preprocessing", {})
+    return DentalSegDataset(
+        frame,
+        train_transform() if augment else None,
+        image_size=tuple(config["data"]["image_size"]),
+        preprocessing_mode=preprocessing.get("mode", "baseline"),
+        gamma=float(preprocessing.get("gamma", 1.0)),
+    )
 
 
 def make_train_loader(dataset: DentalSegDataset, config: dict):
@@ -34,4 +44,3 @@ def make_train_loader(dataset: DentalSegDataset, config: dict):
 def make_eval_loader(dataset: DentalSegDataset, config: dict):
     return DataLoader(dataset, batch_size=config["training"]["batch_size"], shuffle=False,
                       num_workers=config["data"].get("num_workers", 0))
-

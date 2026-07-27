@@ -1,0 +1,3 @@
+method,alpha,threshold,empirical_pixel_coverage,ambiguous_or_empty_fraction
+Baseline,0.1,0.002444,0.900798,0.098015
+CLAHE,0.1,0.007710,0.901208,0.097311

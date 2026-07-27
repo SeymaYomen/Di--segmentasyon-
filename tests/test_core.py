@@ -1,10 +1,12 @@
 import numpy as np
 import torch
+from pathlib import Path
 
 from src.conformal import finite_sample_quantile, prediction_set
 from src.losses import DiceBCELoss
 from src.metrics import binary_metrics
-from src.preprocessing import split_patch2
+from src.preprocessing import enhance_image, split_patch2
+from src.prepare_opg_external import normalized_stem
 
 
 def test_patch2_preserves_width_and_alignment():
@@ -28,3 +30,17 @@ def test_conformal_set_logic():
     assert inc0.tolist() == [True, True, False]
     assert inc1.tolist() == [False, True, True]
 
+
+def test_preprocessing_modes_keep_shape_and_type():
+    image = np.tile(np.arange(32, dtype=np.uint8), (24, 1))
+    image = np.repeat(image[..., None], 3, axis=2)
+    for mode in ["baseline", "clahe", "gamma", "clahe_bilateral"]:
+        result = enhance_image(image, mode=mode, gamma=0.9)
+        assert result.shape == image.shape
+        assert result.dtype == np.uint8
+
+
+def test_external_mask_name_matches_image_name():
+    image = Path("img100_png.rf.abc123.jpg")
+    mask = Path("img100_png.rf.abc123_mask.png")
+    assert normalized_stem(image) == normalized_stem(mask)
