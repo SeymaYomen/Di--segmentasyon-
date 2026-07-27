@@ -102,6 +102,16 @@ python -m src.evaluate --config configs/cdpr_baseline.yaml --checkpoint checkpoi
 python -m src.conformal --config configs/cdpr_baseline.yaml --checkpoint checkpoints/cdpr_baseline_best.pth
 ```
 
+`src.evaluate`, her çalışmada toplu metriklerin yanında görüntü bazlı metrikleri
+ve config/checkpoint/veri ayrımı SHA-256 değerlerini içeren
+`evaluation_provenance.json` dosyasını üretir. Altı deney tamamlandıktan sonra
+yayımlanabilir tablo ve grafikler elle kopyalanmadan üretilir:
+
+```bash
+python -m src.collect_published_results
+python -m src.generate_publication_figures
+```
+
 CLAHE karşılaştırması için `configs/cdpr_clahe.yaml` kullanılır. Ana model
 U-Net++/ResNet34'tür. En iyi ağırlık doğrulama kaybına göre seçilir ve erken
 durdurma uygulanır.

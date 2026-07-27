@@ -11,7 +11,8 @@ Son güncelleme: 27 Temmuz 2026
 - Mendeley OPG bağımsız dış testi (n=329)
 - STS sızıntı taraması ve temiz keşifsel dış test (n=52)
 - Dice, IoU ve piksel doğruluğu hesapları
-- Eşleştirilmiş bootstrap, %95 güven aralıkları ve Holm düzeltmesi
+- Görüntü bazlı değerlendirme, eşleştirilmiş bootstrap, %95 güven aralıkları
+  ve Holm düzeltmesi
 - Baseline ve CLAHE conformal kalibrasyonu
 - Yaş alt grup analizi
 - Sonuç tablolarının kimliksiz biçimde hazırlanması
@@ -29,8 +30,14 @@ arasında anlamlı fark gözlenmedi.
 
 ## Kalan işler
 
-- [ ] Dış testlerden sekizer nitel tahmin görselini tamamlamak
+- [x] Drive'daki altı deneyin `metrics.json` ve görüntü bazlı metrikleriyle
+  yayımlanan toplu metrikleri doğrulamak
+- [x] Baseline–CLAHE eşleştirilmiş bootstrap testini ve Holm düzeltmesini
+  tamamlamak
+- [x] Mendeley dış testinden her yöntem için sekizer nitel tahmin görseli
+  üretmek
 - [x] Streamlit araştırma demosunu hazırlamak
+- [x] Streamlit servisini gerçek checkpoint çıkarımlarıyla doğrulamak
 - [x] Makale taslağı iskeletini oluşturmak
 - [ ] Danışmanla başlık, yazar sırası ve hedef dergiyi kesinleştirmek
 - [ ] Makale metnini kaynaklarla genişletmek
